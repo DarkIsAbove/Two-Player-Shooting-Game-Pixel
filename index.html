@@ -173,25 +173,13 @@
     let shooter = new Shooter(boxNumber - rowNumber * 2 - Math.floor(rowNumber / 2) - 1,"up");
 
     /*
+       starting_x + x,starting_y + (rowNumber * y) <-> the top left corner
        shooter facing up
-    	 shooter_head_current_index,
-    	 shooter_head_current_index + rowNumber - 1,shooter_head_current_index + rowNumber,shooter_head_current_index + rowNumber + 1,
-    	 shooter_head_current_index + rowNumber * 2 - 1,shooter_head_current_index + rowNumber * 2 + 1
-
-       shooter facing left
-       shooter_head_current_index - rowNumber + 1,shooter_head_current_index - rowNumber + 2
-       shooter_head_current_index,shooter_head_current_index + 1
-       shooter_head_current_index + rowNumber + 1,shooter_head_current_index + rowNumber + 2
-
-       shooter facing right
-       shooter_head_current_index - rowNumber - 1,shooter_head_current_index - rowNumber - 2
-       shooter_head_current_index,shooter_head_current_index - 1,
-       shooter_head_current_index + rowNumber - 1,shooter_head_current_index + rowNumber - 2
-
-       shooter facing down
-       shooter_head_current_index - rowNumber * 2 - 1,shooter_head_current_index - rowNumber * 2 + 1
-       shooter_head_current_index - rowNumber - 1,shooter_head_current_index - rowNumber,shooter_head_current_index - rowNumber + 1,
-       shooter_head_current_index
+    	 [
+         [0,1,0],
+         [1,1,1],
+         [1,0,1]
+    	 ]
        
        chi = shooter_head_current_index
        f = facing

@@ -53,63 +53,8 @@
 
     	update_head_current_index(faceTo) {
     		if (faceTo == this.facingAt) return;
-        switch (faceTo) {
-          case "left" :
-          	switch (this.facingAt) {
-          	  case "up" :
-          	  	this.head_current_index = this.head_current_index + rowNumber - 1;
-          	  	break;
-          	  case "right" :
-          	  	this.head_current_index -= 2;
-          	  	break;
-          	  case "down" :
-          	  	this.head_current_index = this.head_current_index - rowNumber - 1;
-          	  	break;
-          	}
-          this.facingAt = "left";
-          break;
-          case "up" :
-          	switch (this.facingAt) {
-          	  case "right" :
-          	    this.head_current_index = this.head_current_index - rowNumber - 1;
-          	    break;
-          	  case "down" :
-          	    this.head_current_index -= rowNumber * 2;
-          	    break;
-          	  case "left" :
-          	  	this.head_current_index = this.head_current_index - rowNumber + 1;
-          	  	break;
-          	}
-          this.facingAt = "up";
-          break;
-          case "right" :
-          	switch (this.facingAt) {
-          	  case "down" :
-          	  	this.head_current_index = this.head_current_index - rowNumber + 1;
-          	  	break;
-          	  case "left" :
-          	  	this.head_current_index += 2;
-          	  	break;
-          	  case "up" :
-          	  	this.head_current_index = this.head_current_index + rowNumber + 1;
-          	  	break;
-          	}
-          this.facingAt = "right";
-          break;
-          case "down" :
-          	switch (this.facingAt) {
-          	  case "left" :
-          	  	this.head_current_index = this.head_current_index + rowNumber + 1;
-          	  	break;
-          	  case "up" :
-          	  	this.head_current_index += rowNumber * 2;
-          	  	break;
-          	  case "right" :
-          	  	this.head_current_index = this.head_current_index + rowNumber - 1;
-          	}
-          this.facingAt = "down";
-          break;
-        }
+    		
+        this.facingAt = faceTo;
     	}
 
     	update_indexes() {
@@ -181,11 +126,20 @@
          [1,0,1]
     	 ]
        
+       change the shooter head index to:
+       up
+    	 [
+         [0,1,0],
+         [0,0,0],
+         [0,0,0]
+    	 ]
+       
        chi = shooter_head_current_index
+       chi2 = shooter_head_current_index_body
        f = facing
        if f is up 
          -> left
-         chi + rowNumber - 1
+         chi2 + 3 - 1
          -> right
          chi + rowNumber + 1
          -> down

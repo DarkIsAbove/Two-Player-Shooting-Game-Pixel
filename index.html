@@ -45,68 +45,27 @@
     let boxes = document.querySelectorAll("#container div");
 
     class Shooter {
-    	constructor(head_current_index,faceAt) {
-    		this.head_current_index = head_current_index;
+    	constructor(grid_x,grid_y,body,faceAt) {
     		this.facingAt = faceAt;
-    		this.indexes = [head_current_index];
+    		this.body = body;
+    		this.grid_x = grid_x;
+    		this.grid_y = grid_y;
     	}
 
-    	update_head_current_index(faceTo) {
+    	update_facingAt(body,faceTo) {
     		if (faceTo == this.facingAt) return;
-    		
+    		this.body = body;
         this.facingAt = faceTo;
     	}
 
-    	update_indexes() {
-    		let head_index = this.head_current_index;
-    		function left() {
-          return [
-              head_index - rowNumber + 1,head_index - rowNumber + 2,
-              head_index,head_index + 1,
-              head_index + rowNumber + 1,head_index + rowNumber + 2
-          	];
-    		}
-    		function up() {
-    			return [
-              head_index,
-              head_index + rowNumber - 1,head_index + rowNumber,head_index + rowNumber + 1,
-              head_index + rowNumber * 2 - 1,head_index + rowNumber * 2 + 1
-    			  ];
-    		}
-    		function right() {
-    			return [
-              head_index - rowNumber - 1,head_index - rowNumber - 2,
-              head_index,head_index - 1,
-              head_index + rowNumber - 1,head_index + rowNumber - 2
-    			  ];
-    		}
-    		function down() {
-    			return [
-              head_index - rowNumber * 2 - 1,head_index - rowNumber * 2 + 1,
-              head_index - rowNumber - 1,head_index - rowNumber,head_index - rowNumber + 1,
-              head_index
-    			  ];
-    		}
-
-    		switch (this.facingAt) {
-    		  case "left" :
-    		  	this.indexes = left();
-    		  	break;
-    		  case "up" :
-    		  	this.indexes = up();
-    		  	break;
-    		  case "right" :
-    		  	this.indexes = right();
-    		  	break;
-    		  case "down" :
-    		  	this.indexes = down();
-    		  	break;
-    		}
-    	}
-
     	draw() {
-    		for (let i = 0;i < this.indexes.length;i++) {
-    			boxes[this.indexes[i]].classList.add('shooter');
+    		for (let y = 0;y < this.body.length;y++) {
+    			for (let x = 0;x < this.body[y].length;x++) {
+    				if (this.body[y][x] == 1) {
+              let index = this.grid_x + (this.grid_y * rowNumber) + x + (y * rowNumber);
+              boxes[index].classList.add("shooter");
+    				}
+    			}
     		}
     	}
 
@@ -115,57 +74,13 @@
     		this.draw();
     	}
     }
-    let shooter = new Shooter(boxNumber - rowNumber * 2 - Math.floor(rowNumber / 2) - 1,"up");
-
-    /*
-       starting_x + x,starting_y + (rowNumber * y) <-> the top left corner
-       shooter facing up
-    	 [
+    let shooter = new Shooter(rowNumber - (rowNumber / 2),rowNumber - 3,[
          [0,1,0],
          [1,1,1],
          [1,0,1]
-    	 ]
-       
-       change the shooter head index to:
-       up
-    	 [
-         [0,1,0],
-         [0,0,0],
-         [0,0,0]
-    	 ]
-       
-       chi = shooter_head_current_index
-       chi2 = shooter_head_current_index_body
-       f = facing
-       if f is up 
-         -> left
-         chi2 + 3 - 1
-         -> right
-         chi + rowNumber + 1
-         -> down
-         chi + rowNumber * 2
-       if f is right
-         -> left
-         chi - 2
-         -> down
-         chi + rowNumber - 1
-         -> up
-         chi - rowNumber - 1
-       if f is down
-         -> left
-         chi - rowNumber - 1
-         -> right
-         chi - rowNumber + 1
-         -> up
-         chi - rowNumber * 2
-       if f is left 
-         -> right
-         chi + 2
-         -> down
-         chi + rowNumber + 1
-         -> up
-         chi - rowNumber - 1
-    */
+    	 ],"up");
+
+    
     function clearScreen() {
     	for (let i = 0;i < boxes.length;i++) {
     		boxes[i].classList.remove("shooter")
@@ -180,43 +95,55 @@
 
     requestAnimationFrame(animate);
     
-    let moveShooterId;
     window.onkeydown = function(event) {
     	switch (event.keyCode) {
          case 37:
-         	shooter.update_head_current_index("left");
+         	shooter.update_facingAt([
+         		[0,1,1],
+         		[1,1,0],
+         		[0,1,1]
+         	],"left");
          	break;
          case 38:
-         	shooter.update_head_current_index("up");
+         	shooter.update_facingAt([
+         		[0,1,0],
+         		[1,1,1],
+         		[1,0,1]
+         	],"up");
          	break;
          case 39:
-         	shooter.update_head_current_index("right");
+         	shooter.update_facingAt([
+         		[1,1,0],
+         		[0,1,1],
+         		[1,1,0]
+         	],"right");
          	break;
          case 40:
-         	shooter.update_head_current_index("down");
+         	shooter.update_facingAt([
+         		[1,0,1],
+         		[1,1,1],
+         		[0,1,0]
+         	],"down");
     	}
       function moveShooter() {
       	switch (shooter.facingAt) {
       	  case "left" :
-      	  	shooter.head_current_index--;
+      	  	shooter.grid_x--;
       	  	break;
       	  case "up" :
-      	  	shooter.head_current_index -= rowNumber;
+      	  	shooter.grid_y--;
       	  	break;
       	  case "right" :
-      	  	shooter.head_current_index++;
+      	  	shooter.grid_x++;
       	  	break;
       	  case "down" :
-      	  	shooter.head_current_index += rowNumber;
+      	  	shooter.grid_y++;
       	  	break;
       	}
       }
       moveShooter();
     }
 
-    window.onkeyup = function() {
-    	clearInterval(moveShooterId);
-    }
   </script>
 </body>
 </html>

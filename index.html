@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<style type="text/css">
+		body {
+			padding: 0;
+			margin: 0;
+		}
+
+		#container {
+			display: flex;
+			flex-wrap: wrap;
+			border: 1px solid black;
+		}
+
+		#container div {
+           border: 1px solid black;
+		}
+
+		.shooter {
+			background: gray;
+		}
+
+	</style>
+</head>
+<body>
+  <div id="container"></div>
+  <script type="text/javascript"> 
+    let container = document.getElementById("container");
+    let size = 500;
+    container.style.width = size + "px";
+    container.style.height = size + "px";
+    let boxSize = 25;
+    let rowNumber = size / boxSize;
+    let boxNumber = rowNumber * rowNumber;
+    for (let i = 0;i < boxNumber;i++) {
+      let div = document.createElement("div");
+      div.style.width = boxSize - 2 + "px";
+      div.style.height = boxSize - 2 + "px";
+      container.appendChild(div);
+    }
+    let boxes = document.querySelectorAll("#container div");
+
+    class Shooter {
+    	constructor(head_current_index,faceAt) {
+    		this.head_current_index = head_current_index;
+    		this.facingAt = faceAt;
+    		this.indexes = [head_current_index];
+    	}
+
+    	update_head_current_index(faceTo) {
+    		if (faceTo == this.facingAt) return;
+        switch (faceTo) {
+          case "left" :
+          	switch (this.facingAt) {
+          	  case "up" :
+          	  	this.head_current_index = this.head_current_index + rowNumber - 1;
+          	  	break;
+          	  case "right" :
+          	  	this.head_current_index -= 2;
+          	  	break;
+          	  case "down" :
+          	  	this.head_current_index = this.head_current_index - rowNumber - 1;
+          	  	break;
+          	}
+          this.facingAt = "left";
+          break;
+          case "up" :
+          	switch (this.facingAt) {
+          	  case "right" :
+          	    this.head_current_index = this.head_current_index - rowNumber - 1;
+          	    break;
+          	  case "down" :
+          	    this.head_current_index -= rowNumber * 2;
+          	    break;
+          	  case "left" :
+          	  	this.head_current_index = this.head_current_index - rowNumber + 1;
+          	  	break;
+          	}
+          this.facingAt = "up";
+          break;
+          case "right" :
+          	switch (this.facingAt) {
+          	  case "down" :
+          	  	this.head_current_index = this.head_current_index - rowNumber + 1;
+          	  	break;
+          	  case "left" :
+          	  	this.head_current_index += 2;
+          	  	break;
+          	  case "up" :
+          	  	this.head_current_index = this.head_current_index + rowNumber + 1;
+          	  	break;
+          	}
+          this.facingAt = "right";
+          break;
+          case "down" :
+          	switch (this.facingAt) {
+          	  case "left" :
+          	  	this.head_current_index = this.head_current_index + rowNumber + 1;
+          	  	break;
+          	  case "up" :
+          	  	this.head_current_index += rowNumber * 2;
+          	  	break;
+          	  case "right" :
+          	  	this.head_current_index = this.head_current_index + rowNumber - 1;
+          	}
+          this.facingAt = "down";
+          break;
+        }
+    	}
+
+    	update_indexes() {
+    		let head_index = this.head_current_index;
+    		function left() {
+          return [
+              head_index - rowNumber + 1,head_index - rowNumber + 2,
+              head_index,head_index + 1,
+              head_index + rowNumber + 1,head_index + rowNumber + 2
+          	];
+    		}
+    		function up() {
+    			return [
+              head_index,
+              head_index + rowNumber - 1,head_index + rowNumber,head_index + rowNumber + 1,
+              head_index + rowNumber * 2 - 1,head_index + rowNumber * 2 + 1
+    			  ];
+    		}
+    		function right() {
+    			return [
+              head_index - rowNumber - 1,head_index - rowNumber - 2,
+              head_index,head_index - 1,
+              head_index + rowNumber - 1,head_index + rowNumber - 2
+    			  ];
+    		}
+    		function down() {
+    			return [
+              head_index - rowNumber * 2 - 1,head_index - rowNumber * 2 + 1,
+              head_index - rowNumber - 1,head_index - rowNumber,head_index - rowNumber + 1,
+              head_index
+    			  ];
+    		}
+
+    		switch (this.facingAt) {
+    		  case "left" :
+    		  	this.indexes = left();
+    		  	break;
+    		  case "up" :
+    		  	this.indexes = up();
+    		  	break;
+    		  case "right" :
+    		  	this.indexes = right();
+    		  	break;
+    		  case "down" :
+    		  	this.indexes = down();
+    		  	break;
+    		}
+    	}
+
+    	draw() {
+    		for (let i = 0;i < this.indexes.length;i++) {
+    			boxes[this.indexes[i]].classList.add('shooter');
+    		}
+    	}
+
+    	update() {
+    		this.update_indexes();
+    		this.draw();
+    	}
+    }
+    let shooter = new Shooter(boxNumber - rowNumber * 2 - Math.floor(rowNumber / 2) - 1,"up");
+
+    /*
+       shooter facing up
+    	 shooter_head_current_index,
+    	 shooter_head_current_index + rowNumber - 1,shooter_head_current_index + rowNumber,shooter_head_current_index + rowNumber + 1,
+    	 shooter_head_current_index + rowNumber * 2 - 1,shooter_head_current_index + rowNumber * 2 + 1
+
+       shooter facing left
+       shooter_head_current_index - rowNumber + 1,shooter_head_current_index - rowNumber + 2
+       shooter_head_current_index,shooter_head_current_index + 1
+       shooter_head_current_index + rowNumber + 1,shooter_head_current_index + rowNumber + 2
+
+       shooter facing right
+       shooter_head_current_index - rowNumber - 1,shooter_head_current_index - rowNumber - 2
+       shooter_head_current_index,shooter_head_current_index - 1,
+       shooter_head_current_index + rowNumber - 1,shooter_head_current_index + rowNumber - 2
+
+       shooter facing down
+       shooter_head_current_index - rowNumber * 2 - 1,shooter_head_current_index - rowNumber * 2 + 1
+       shooter_head_current_index - rowNumber - 1,shooter_head_current_index - rowNumber,shooter_head_current_index - rowNumber + 1,
+       shooter_head_current_index
+       
+       chi = shooter_head_current_index
+       f = facing
+       if f is up 
+         -> left
+         chi + rowNumber - 1
+         -> right
+         chi + rowNumber + 1
+         -> down
+         chi + rowNumber * 2
+       if f is right
+         -> left
+         chi - 2
+         -> down
+         chi + rowNumber - 1
+         -> up
+         chi - rowNumber - 1
+       if f is down
+         -> left
+         chi - rowNumber - 1
+         -> right
+         chi - rowNumber + 1
+         -> up
+         chi - rowNumber * 2
+       if f is left 
+         -> right
+         chi + 2
+         -> down
+         chi + rowNumber + 1
+         -> up
+         chi - rowNumber - 1
+    */
+    function clearScreen() {
+    	for (let i = 0;i < boxes.length;i++) {
+    		boxes[i].classList.remove("shooter")
+    	}
+    }
+
+    function animate() {
+      clearScreen();
+      shooter.update();
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+    
+    let moveShooterId;
+    window.onkeydown = function(event) {
+    	switch (event.keyCode) {
+         case 37:
+         	shooter.update_head_current_index("left");
+         	break;
+         case 38:
+         	shooter.update_head_current_index("up");
+         	break;
+         case 39:
+         	shooter.update_head_current_index("right");
+         	break;
+         case 40:
+         	shooter.update_head_current_index("down");
+    	}
+      function moveShooter() {
+      	switch (shooter.facingAt) {
+      	  case "left" :
+      	  	shooter.head_current_index--;
+      	  	break;
+      	  case "up" :
+      	  	shooter.head_current_index -= rowNumber;
+      	  	break;
+      	  case "right" :
+      	  	shooter.head_current_index++;
+      	  	break;
+      	  case "down" :
+      	  	shooter.head_current_index += rowNumber;
+      	  	break;
+      	}
+      }
+      moveShooter();
+    }
+
+    window.onkeyup = function() {
+    	clearInterval(moveShooterId);
+    }
+  </script>
+</body>
+</html>
